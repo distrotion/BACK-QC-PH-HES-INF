@@ -127,99 +127,137 @@ router.post('/FINAL/GETINtoHSRGH001', async (req, res) => {
   let output = 'NOK';
   check = HSRGH001db;
   if (input['PO'] !== undefined && input['CP'] !== undefined && check['PO'] === '' && input['USER'] !== undefined && input['USERID'] !== undefined) {
-    // let dbsap = await mssql.qurey(`select * FROM [SAPData_GW_GAS].[dbo].[tblSAPDetail] where [PO] = ${input['PO']}`);
-
-    let findPO = await mongodb.findSAP('mongodb://172.23.10.39:12020', "ORDER", "ORDER", {});
-
-    let cuslot = '';
-
-    if (findPO[0][`DATA`] != undefined && findPO[0][`DATA`].length > 0) {
-      let dbsap = ''
-      for (i = 0; i < findPO[0][`DATA`].length; i++) {
-        if (findPO[0][`DATA`][i][`PO`] === input['PO']) {
-          dbsap = findPO[0][`DATA`][i];
-          // break;
-          cuslot = cuslot + findPO[0][`DATA`][i][`CUSLOTNO`] + ','
-        }
-      }
-
-      if (dbsap === '') {
-        try {
-          let resp = await axios.post('http://tp-portal.thaiparker.co.th/API_QcReport/ZBAPI_QC_INTERFACE', {
-            "BAPI_NAME": "ZPPIN011_OUT",
-            "IMP_TEXT02": input['PO'],
-            "TABLE_NAME": "PPORDER"
-          });
-          // if (resp.status == 200) {
-          let returnDATA = resp;
-          // output = returnDATA["Records"] || []
-          console.log(returnDATA["Records"])
-          if (returnDATA["Records"].length > 0) {
-
-
-            dataout = {
-              'PO': `${parseInt(returnDATA["Records"][0]['PO'])}`,
-              'SEQUENCE': returnDATA["Records"][0]['SEQ'],
-              'CP': `${parseInt(returnDATA["Records"][0]['CPMAT'])}`,
-              'FG': `${parseInt(returnDATA["Records"][0]['FGMAT'])}`,
-              'STATUS': returnDATA["Records"][0]['STA'],
-              'QUANTITY': returnDATA["Records"][0]['QTYT'],
-              'UNIT': returnDATA["Records"][0]['UNIT'],
-              'COSTCENTER': returnDATA["Records"][0]['CUSTNA'],
-
-              'PART': returnDATA["Records"][0]['PARTNO'],
-              'PARTNAME': returnDATA["Records"][0]['PARTNA'],
-              'MATERIAL': returnDATA["Records"][0]['MATNA'],
-              'CUSTOMER': returnDATA["Records"][0]['CUSLOTNO'],
-              'PROCESS': returnDATA["Records"][0]['PROC'],
-              'WGT_PC': returnDATA["Records"][0]['WEIGHT_PC'],
-              'WGT_JIG': returnDATA["Records"][0]['WEIGHT_JIG'],
-              'ACTQTY': returnDATA["Records"][0]['ACT_QTY'],
-              'CUSLOTNO': returnDATA["Records"][0]['CUSLOTNO'],
-              'FG_CHARG': returnDATA["Records"][0]['FG_CHARG'],
-              'CUSTNAME': returnDATA["Records"][0]['CUST_FULLNM'],
-            };
-
-
-            dbsap = dataout
+      // let dbsap = await mssql.qurey(`select * FROM [SAPData_GW_GAS].[dbo].[tblSAPDetail] where [PO] = ${input['PO']}`);
+  
+      let findPO = await mongodb.findSAP('mongodb://172.23.10.39:12020', "ORDER", "ORDER", {});
+  
+      let cuslot = '';
+  //&& findPO[0][`DATA`].length > 0
+      if (findPO[0][`DATA`] != undefined ) {
+        let dbsap = ''
+        for (i = 0; i < findPO[0][`DATA`].length; i++) {
+          if (findPO[0][`DATA`][i][`PO`] === input['PO']) {
+            dbsap = findPO[0][`DATA`][i];
+            // break;
+            cuslot = cuslot + findPO[0][`DATA`][i][`CUSLOTNO`] + ','
           }
+        }
+  
+        if (dbsap === '') {
+        //   try {
+            // let resp = await axios.post('http://tp-portal.thaiparker.co.th/API_QcReport/ZBAPI_QC_INTERFACE', {
+            //   "BAPI_NAME": "ZPPIN011_OUT",
+            //   "IMP_TEXT02": input['PO'],
+            //   "TABLE_NAME": "PPORDER"
+            // });
+            // // if (resp.status == 200) {
+            // let returnDATA = resp;
+            // // output = returnDATA["Records"] || []
+            // console.log(returnDATA["Records"])
+            // if (returnDATA["Records"].length > 0) {
+  
+  
+            //   dataout = {
+            //     'PO': `${parseInt(returnDATA["Records"][0]['PO'])}`,
+            //     'SEQUENCE': returnDATA["Records"][0]['SEQ'],
+            //     'CP': `${parseInt(returnDATA["Records"][0]['CPMAT'])}`,
+            //     'FG': `${parseInt(returnDATA["Records"][0]['FGMAT'])}`,
+            //     'STATUS': returnDATA["Records"][0]['STA'],
+            //     'QUANTITY': returnDATA["Records"][0]['QTYT'],
+            //     'UNIT': returnDATA["Records"][0]['UNIT'],
+            //     'COSTCENTER': returnDATA["Records"][0]['CUSTNA'],
+  
+            //     'PART': returnDATA["Records"][0]['PARTNO'],
+            //     'PARTNAME': returnDATA["Records"][0]['PARTNA'],
+            //     'MATERIAL': returnDATA["Records"][0]['MATNA'],
+            //     'CUSTOMER': returnDATA["Records"][0]['CUSLOTNO'],
+            //     'PROCESS': returnDATA["Records"][0]['PROC'],
+            //     'WGT_PC': returnDATA["Records"][0]['WEIGHT_PC'],
+            //     'WGT_JIG': returnDATA["Records"][0]['WEIGHT_JIG'],
+            //     'ACTQTY': returnDATA["Records"][0]['ACT_QTY'],
+            //     'CUSLOTNO': returnDATA["Records"][0]['CUSLOTNO'],
+            //     'FG_CHARG': returnDATA["Records"][0]['FG_CHARG'],
+            //     'CUSTNAME': returnDATA["Records"][0]['CUST_FULLNM'],
+            //   };
+  
+  
+            //   dbsap = dataout
+            // }
+            // }
+            
+          // } catch (err) {
+          //   output = [];
           // }
-        } catch (err) {
-          output = [];
-        }
-      }
-
-
-      if (dbsap !== '') {
-
-        let findcp = await mongodb.find(PATTERN, PATTERN_01, { "CP": input['CP'] });
-        let masterITEMs = await mongodb.find(master_FN, ITEMs, {});
-        let MACHINEmaster = await mongodb.find(master_FN, MACHINE, {});
-
-        let ItemPickout = [];
-        let ItemPickcodeout = [];
-
-        for (i = 0; i < findcp[0]['FINAL'].length; i++) {
-          for (j = 0; j < masterITEMs.length; j++) {
-            if (findcp[0]['FINAL'][i]['ITEMs'] === masterITEMs[j]['masterID']) {
-              ItemPickout.push(masterITEMs[j]['ITEMs']);
-              ItemPickcodeout.push({ "key": masterITEMs[j]['masterID'], "value": masterITEMs[j]['ITEMs'], "METHOD": findcp[0]['FINAL'][i]['METHOD'] });
+          try {
+            let resp = await axios.post('http://172.23.10.40:16700/RAWDATA/sapget', {
+              "ORDER": input['PO'],
+            });
+            let returnDATA = resp;
+            // output = returnDATA["Records"] || []
+            if (returnDATA.length > 0) {
+  
+  
+              dataout = {
+                'PO': `${parseInt(returnDATA[0]['PO'])}`,
+                'SEQUENCE': returnDATA[0]['SEQ'],
+                'CP': `${parseInt(returnDATA[0]['CPMAT'])}`,
+                'FG': `${parseInt(returnDATA[0]['FGMAT'])}`,
+                'STATUS': returnDATA[0]['STA'],
+                'QUANTITY': returnDATA[0]['QTYT'],
+                'UNIT': returnDATA[0]['UNIT'],
+                'COSTCENTER': returnDATA[0]['CUSTNA'],
+  
+                'PART': returnDATA[0]['PARTNO'],
+                'PARTNAME': returnDATA[0]['PARTNA'],
+                'MATERIAL': returnDATA[0]['MATNA'],
+                'CUSTOMER': returnDATA[0]['CUSLOTNO'],
+                'PROCESS': returnDATA[0]['PROC'],
+                'WGT_PC': returnDATA[0]['WEIGHT_PC'],
+                'WGT_JIG': returnDATA[0]['WEIGHT_JIG'],
+                'ACTQTY': returnDATA[0]['ACT_QTY'],
+                'CUSLOTNO': returnDATA[0]['CUSLOTNO'],
+                'FG_CHARG': returnDATA[0]['FG_CHARG'],
+                'CUSTNAME': returnDATA[0]['CUST_FULLNM'],
+              };
+  
+              dbsap = dataout
             }
+          } catch (err) {
+            output = [];
           }
         }
-
-        let ItemPickoutP2 = []
-        let ItemPickcodeoutP2 = [];
-        for (i = 0; i < ItemPickcodeout.length; i++) {
-          for (j = 0; j < MACHINEmaster.length; j++) {
-            if (ItemPickcodeout[i]['METHOD'] === MACHINEmaster[j]['masterID']) {
-              if (MACHINEmaster[j]['MACHINE'].includes(NAME_INS)) {
-                ItemPickoutP2.push(ItemPickout[i]);
-                ItemPickcodeoutP2.push(ItemPickcodeout[i]);
+  
+  
+        if (dbsap !== '') {
+  
+          let findcp = await mongodb.find(PATTERN, PATTERN_01, { "CP": input['CP'] });
+          let masterITEMs = await mongodb.find(master_FN, ITEMs, {});
+          let MACHINEmaster = await mongodb.find(master_FN, MACHINE, {});
+  
+          let ItemPickout = [];
+          let ItemPickcodeout = [];
+  
+          for (i = 0; i < findcp[0]['FINAL'].length; i++) {
+            for (j = 0; j < masterITEMs.length; j++) {
+              if (findcp[0]['FINAL'][i]['ITEMs'] === masterITEMs[j]['masterID']) {
+                ItemPickout.push(masterITEMs[j]['ITEMs']);
+                ItemPickcodeout.push({ "key": masterITEMs[j]['masterID'], "value": masterITEMs[j]['ITEMs'], "METHOD": findcp[0]['FINAL'][i]['METHOD'] });
               }
             }
           }
-        }
+  
+          let ItemPickoutP2 = []
+          let ItemPickcodeoutP2 = [];
+          for (i = 0; i < ItemPickcodeout.length; i++) {
+            for (j = 0; j < MACHINEmaster.length; j++) {
+              if (ItemPickcodeout[i]['METHOD'] === MACHINEmaster[j]['masterID']) {
+                if (MACHINEmaster[j]['MACHINE'].includes(NAME_INS)) {
+                  ItemPickoutP2.push(ItemPickout[i]);
+                  ItemPickcodeoutP2.push(ItemPickcodeout[i]);
+                }
+              }
+            }
+          }
 
 
 
