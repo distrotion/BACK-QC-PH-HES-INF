@@ -1265,7 +1265,7 @@ router.post('/FINAL/HSEWB008-feedback', async (req, res) => {
           if (input["ITEMs"] === feedback[0]['CHECKlist'][i]['key']) {
             feedback[0]['CHECKlist'][i]['FINISH'] = 'OK';
             // console.log(feedback[0]['CHECKlist']);
-            if (HSEWB008db['FREQUENCY'] === 'time/6M' ||HSEWB008db['FREQUENCY'] === 'pcs/M'||HSEWB008db['FREQUENCY'] === 'time/Year'||HSEWB008db['FREQUENCY'] === 'pcs/Y') {
+            if (HSEWB008db['FREQUENCY'] === 'time/D'||HSEWB008db['FREQUENCY'] === 'time/6M' ||HSEWB008db['FREQUENCY'] === 'pcs/M'||HSEWB008db['FREQUENCY'] === 'time/Year'||HSEWB008db['FREQUENCY'] === 'pcs/Y') {
               let resp = await axios.post('http://127.0.0.1:16090/FINAL/REFLOTSET', {
                 "PO": HSEWB008db['PO'],
                 "MATCP": HSEWB008db['CP'],

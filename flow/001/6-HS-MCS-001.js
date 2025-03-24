@@ -578,7 +578,7 @@ router.post('/FINAL/HSMCS001-feedback', async (req, res) => {
           if (input["ITEMs"] === feedback[0]['CHECKlist'][i]['key']) {
             feedback[0]['CHECKlist'][i]['FINISH'] = 'OK';
             // console.log(feedback[0]['CHECKlist']);
-            if (HSMCS001db['FREQUENCY'] === 'time/6M'||HSMCS001db['FREQUENCY'] === 'pcs/M'||HSMCS001db['FREQUENCY'] === 'time/Year'||HSMCS001db['FREQUENCY'] === 'pcs/Y') {
+            if (HSMCS001db['FREQUENCY'] === 'time/D'|| HSMCS001db['FREQUENCY'] === 'time/6M'||HSMCS001db['FREQUENCY'] === 'pcs/M'||HSMCS001db['FREQUENCY'] === 'time/Year'||HSMCS001db['FREQUENCY'] === 'pcs/Y') {
               let resp = await axios.post('http://127.0.0.1:16090/FINAL/REFLOTSET', {
                 "PO": HSMCS001db['PO'],
                 "MATCP": HSMCS001db['CP'],

@@ -641,7 +641,7 @@ router.post('/FINAL/HSRGH001-feedback', async (req, res) => {
           if (input["ITEMs"] === feedback[0]['CHECKlist'][i]['key']) {
             feedback[0]['CHECKlist'][i]['FINISH'] = 'OK';
             // console.log(feedback[0]['CHECKlist']);
-            if (HSRGH001db['FREQUENCY'] === 'time/6M'||HSRGH001db['FREQUENCY'] === 'pcs/M'||HSRGH001db['FREQUENCY'] === 'time/Year'||HSRGH001db['FREQUENCY'] === 'pcs/Y') {
+            if (HSRGH001db['FREQUENCY'] === 'time/D'|| HSRGH001db['FREQUENCY'] === 'time/6M'||HSRGH001db['FREQUENCY'] === 'pcs/M'||HSRGH001db['FREQUENCY'] === 'time/Year'||HSRGH001db['FREQUENCY'] === 'pcs/Y') {
               let resp = await axios.post('http://127.0.0.1:16090/FINAL/REFLOTSET', {
                 "PO": HSRGH001db['PO'],
                 "MATCP": HSRGH001db['CP'],

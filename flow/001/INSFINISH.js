@@ -1006,6 +1006,9 @@ router.post('/FINAL/REFLOTSET', async (req, res) => {
       if(FREQUENCY.includes("pcs/M")){
          EXP = date + 2629743000
       }
+      if(FREQUENCY.includes("pcs/D")){
+        EXP = date + 87658100
+     }
 
       try{
 
