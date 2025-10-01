@@ -173,6 +173,13 @@ router.post('/FINAL/HSEWB008db', async (req, res) => {
         HSEWB008db['confirmdataCW'][0]['Area'] = feedbackLast[0]['Area'];
         HSEWB008db['confirmdataCW'][0]['FORMULA'] = feedbackLast[0]['FORMULA'];
 
+      } else {
+        HSEWB008db['confirmdataCW'][0]['VAL1'] = "";
+        HSEWB008db['confirmdataCW'][0]['VAL2'] = "";
+        HSEWB008db['confirmdataCW'][0]['VAL3'] = "";
+        HSEWB008db['confirmdataCW'][0]['VAL4'] = "";
+        HSEWB008db['confirmdataCW'][0]['Area'] = "";
+        HSEWB008db['confirmdataCW'][0]['FORMULA'] = "";
       }
     } else {
       HSEWB008db['confirmdataCW'][0]['VAL1'] = "";
