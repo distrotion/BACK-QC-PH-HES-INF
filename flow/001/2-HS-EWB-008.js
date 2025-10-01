@@ -68,6 +68,8 @@ let HSEWB008db = {
   "POINTs": "",
   "PCS": "",
   "PCSleft": "",
+  "PCSNO": "",
+
 
   "SPEC": "",
 
@@ -162,7 +164,7 @@ router.post('/FINAL/HSEWB008db', async (req, res) => {
     //   }
     // }else{
     if (HSEWB008db['RESULTFORMAT'] === 'CAL1' || HSEWB008db['RESULTFORMAT'] === 'CAL2') {
-      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'] });
+      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
       if (feedbackLast.length > 0) {
         HSEWB008db['confirmdataCW'][0]['VAL1'] = feedbackLast[0]['VAL1'];
         HSEWB008db['confirmdataCW'][0]['VAL2'] = feedbackLast[0]['VAL2'];
@@ -193,6 +195,87 @@ router.post('/FINAL/HSEWB008db', async (req, res) => {
   //-------------------------------------
   return res.json(finddb);
 });
+
+router.post('/FINAL/HSEWB008db-N', async (req, res) => {
+  //-------------------------------------
+  // console.log('--HSEWB008db--');
+  // console.log(req.body);
+  //-------------------------------------
+  let finddb = [{}];
+  try {
+
+    // "PCS": "",
+    // "PCSleft": "",
+    //
+
+
+    // console.log(HSEWB008db['inspectionItem'])
+
+    // if(HSEWB008db['FREQUENCY'].includes('/6M')){
+    //   if (HSEWB008db['RESULTFORMAT'] === 'CAL1' || HSEWB008db['RESULTFORMAT'] === 'CAL2') {
+    //     let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "CP": HSEWB008db['CP'] });
+    //     if (feedbackLast.length > 0) {
+    //       HSEWB008db['confirmdataCW'][0]['VAL1'] = feedbackLast[0]['VAL1'];
+    //       HSEWB008db['confirmdataCW'][0]['VAL2'] = feedbackLast[0]['VAL2'];
+    //       HSEWB008db['confirmdataCW'][0]['VAL3'] = feedbackLast[0]['VAL3'];
+    //       HSEWB008db['confirmdataCW'][0]['VAL4'] = feedbackLast[0]['VAL4'];
+    //       HSEWB008db['confirmdataCW'][0]['Area'] = feedbackLast[0]['Area'];
+    //       HSEWB008db['confirmdataCW'][0]['FORMULA'] = feedbackLast[0]['FORMULA'];
+
+    //     }
+    //   } else {
+    //     HSEWB008db['confirmdataCW'][0]['VAL1'] = "";
+    //     HSEWB008db['confirmdataCW'][0]['VAL2'] = "";
+    //     HSEWB008db['confirmdataCW'][0]['VAL3'] = "";
+    //     HSEWB008db['confirmdataCW'][0]['VAL4'] = "";
+    //     HSEWB008db['confirmdataCW'][0]['Area'] = "";
+    //     HSEWB008db['confirmdataCW'][0]['FORMULA'] = "";
+    //   }
+    // }else{
+    if (HSEWB008db['RESULTFORMAT'] === 'CAL1' || HSEWB008db['RESULTFORMAT'] === 'CAL2') {
+      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+      if (feedbackLast.length > 0) {
+        HSEWB008db['confirmdataCW'][0]['VAL1'] = feedbackLast[0]['VAL1'];
+        HSEWB008db['confirmdataCW'][0]['VAL2'] = feedbackLast[0]['VAL2'];
+        HSEWB008db['confirmdataCW'][0]['VAL3'] = feedbackLast[0]['VAL3'];
+        HSEWB008db['confirmdataCW'][0]['VAL4'] = feedbackLast[0]['VAL4'];
+        HSEWB008db['confirmdataCW'][0]['Area'] = feedbackLast[0]['Area'];
+        HSEWB008db['confirmdataCW'][0]['FORMULA'] = feedbackLast[0]['FORMULA'];
+
+      }
+    } else {
+      HSEWB008db['confirmdataCW'][0]['VAL1'] = "";
+      HSEWB008db['confirmdataCW'][0]['VAL2'] = "";
+      HSEWB008db['confirmdataCW'][0]['VAL3'] = "";
+      HSEWB008db['confirmdataCW'][0]['VAL4'] = "";
+      HSEWB008db['confirmdataCW'][0]['Area'] = "";
+      HSEWB008db['confirmdataCW'][0]['FORMULA'] = "";
+    }
+    // }
+
+
+
+    finddb = HSEWB008db;
+    finddbbuffer = finddb;
+  }
+  catch (err) {
+    finddb = finddbbuffer;
+  }
+  //-------------------------------------
+  return res.json(finddb);
+});
+
+
+router.post('/FINAL/PCSNO', async (req, res) => {
+  console.log('--FINAL/PCSNO--');
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  HSEWB008db['PCSNO'] = input['PCSNO']
+
+  return res.json(HSEWB008db['PO']);
+});
+
 
 router.post('/FINAL/GETINtoHSEWB008', async (req, res) => {
   //-------------------------------------
@@ -359,12 +442,12 @@ router.post('/FINAL/GETINtoHSEWB008', async (req, res) => {
           "QUANTITY": dbsap['QUANTITY'] || '',
           // "PROCESS":dbsap ['PROCESS'] || '',
           // "CUSLOTNO": dbsap['CUSLOTNO'] || '',
-          "CUSLOTNO":  cuslot,
+          "CUSLOTNO": cuslot,
           "FG_CHARG": dbsap['FG_CHARG'] || '',
           "PARTNAME_PO": dbsap['PARTNAME_PO'] || '',
           "PART_PO": dbsap['PART_PO'] || '',
           "CUSTNAME_s": dbsap['CUSTNAME'] || '',
-          "CUSTNAME": dbsap['CUST_FULLNM']|| '',
+          "CUSTNAME": dbsap['CUST_FULLNM'] || '',
           "UNITSAP": dbsap['UNIT'] || '',
           //----------------------
           "ItemPick": ItemPickoutP2, //---->
@@ -372,6 +455,7 @@ router.post('/FINAL/GETINtoHSEWB008', async (req, res) => {
           "POINTs": "",
           "PCS": "",
           "PCSleft": "",
+          "PCSNO": "",
 
           "SPEC": "",
 
@@ -557,8 +641,8 @@ router.post('/FINAL/HSEWB008-geteachITEM', async (req, res) => {
 
           HSEWB008db["ANSCAL2"] = '';
 
-          let date =  Date.now()
-          let REFLOT = await mongodb.find(PATTERN, "referdata", { "MATCP": HSEWB008db['MATCP'], "ITEMS": ITEMSS,"EXP":{$gt:date} });
+          let date = Date.now()
+          let REFLOT = await mongodb.find(PATTERN, "referdata", { "MATCP": HSEWB008db['MATCP'], "ITEMS": ITEMSS, "EXP": { $gt: date } });
 
           console.log(REFLOT)
 
@@ -744,14 +828,15 @@ router.post('/FINAL/HSEWB008-confirmdata', async (req, res) => {
       console.log(pushdata);
 
 
-      let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'] });
+      let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
 
       console.log(feedback);
       if (feedback.length > 0) {
         console.log("-----------------1");
         if (feedback[0]['VAL1'] != '' && feedback[0]['VAL2'] == '') {
           console.log("-----------------2");
-          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'NO': HSEWB008db["PCS"] }, { "$set": { 'VAL2': pushdata['V2'] } });
+          console.log({ "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] },);
+          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] }, { "$set": { 'VAL2': pushdata['V2'] } });
         }
 
       } else {
@@ -760,11 +845,11 @@ router.post('/FINAL/HSEWB008-confirmdata', async (req, res) => {
         // if (HSEWB008db['K1b'] === '1') {
         areadata = HSEWB008db['K1v']
         // }
-        var ins = await mongodb.insertMany("BUFFERCAL", HSEWB008, [{ "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], "FG": HSEWB008db['FG'], 'VAL1': pushdata['V2'], 'VAL2': "", 'VAL3': "", 'VAL4': "", 'Area': areadata, 'FORMULA': HSEWB008db["FORMULA"], 'NO': HSEWB008db["PCS"] }]);
+        var ins = await mongodb.insertMany("BUFFERCAL", HSEWB008, [{ "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], "FG": HSEWB008db['FG'], 'VAL1': pushdata['V2'], 'VAL2': "", 'VAL3': "", 'VAL4': "", 'Area': areadata, 'FORMULA': HSEWB008db["FORMULA"], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] }]);
       }
 
       HSEWB008db['preview'] = [];
-      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], });
+      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
       if (feedbackLast.length > 0) {
         HSEWB008db['confirmdataCW'][0]['VAL1'] = feedbackLast[0]['VAL1'];
         HSEWB008db['confirmdataCW'][0]['VAL2'] = feedbackLast[0]['VAL2'];
@@ -786,20 +871,20 @@ router.post('/FINAL/HSEWB008-confirmdata', async (req, res) => {
       console.log(pushdata);
 
 
-      let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'] });
+      let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
       console.log("-----------");
       console.log(feedback);
       if (feedback.length > 0) {
         console.log("-----------------1");
         if (feedback[0]['VAL1'] != '' && feedback[0]['VAL2'] == '') {
           console.log("-----------------2");
-          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'NO': HSEWB008db["PCS"] }, { "$set": { 'VAL2': pushdata['V2'] } });
+          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] }, { "$set": { 'VAL2': pushdata['V2'] } });
         } else if (feedback[0]['VAL1'] != '' && feedback[0]['VAL2'] != '' && feedback[0]['VAL3'] == '') {
           console.log("-----------------2");
-          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'NO': HSEWB008db["PCS"] }, { "$set": { 'VAL3': pushdata['V2'] } });
+          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] }, { "$set": { 'VAL3': pushdata['V2'] } });
         } if (feedback[0]['VAL1'] != '' && feedback[0]['VAL2'] != '' && feedback[0]['VAL3'] != '' && feedback[0]['VAL4'] == '') {
           console.log("-----------------2");
-          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'NO': HSEWB008db["PCS"] }, { "$set": { 'VAL4': pushdata['V2'] } });
+          let feedbackupdate = await mongodb.update("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] }, { "$set": { 'VAL4': pushdata['V2'] } });
         }
 
       } else {
@@ -808,11 +893,11 @@ router.post('/FINAL/HSEWB008-confirmdata', async (req, res) => {
         // if (HSEWB008db['K1b'] === '1') {
         areadata = HSEWB008db['K1v']
         // }
-        var ins = await mongodb.insertMany("BUFFERCAL", HSEWB008, [{ "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'VAL1': pushdata['V2'], 'VAL2': "", 'VAL3': "", 'VAL4': "", 'Area': areadata, 'FORMULA': HSEWB008db["FORMULA"], 'NO': HSEWB008db["PCS"] }]);
+        var ins = await mongodb.insertMany("BUFFERCAL", HSEWB008, [{ "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], "POINTs": HSEWB008db['POINTs'], "PCSleft": HSEWB008db['PCSleft'], 'VAL1': pushdata['V2'], 'VAL2': "", 'VAL3': "", 'VAL4': "", 'Area': areadata, 'FORMULA': HSEWB008db["FORMULA"], 'NO': HSEWB008db["PCS"], 'PCSNO': HSEWB008db["PCSNO"] }]);
       }
 
       HSEWB008db['preview'] = [];
-      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], });
+      let feedbackLast = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
       if (feedbackLast.length > 0) {
         HSEWB008db['confirmdataCW'][0]['VAL1'] = feedbackLast[0]['VAL1'];
         HSEWB008db['confirmdataCW'][0]['VAL2'] = feedbackLast[0]['VAL2'];
@@ -881,7 +966,7 @@ router.post('/FINAL/HSEWB008-feedback', async (req, res) => {
       // output = 'OK';
       if ((parseInt(HSEWB008db["PCS"]) - oblist.length) == 0) {
         //CHECKlist
-        
+
         //input["ITEMs"] 
         let masterITEMs = await mongodb.find(master_FN, ITEMs, { "masterID": input["ITEMs"] });
 
@@ -1126,133 +1211,137 @@ router.post('/FINAL/HSEWB008-feedback', async (req, res) => {
             //
 
 
-          } if (masterITEMs[0]['RESULTFORMAT'] === 'CAL1') {
-
-            console.log("---CALCULATEDATA---")
-            let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'] });
-            console.log(feedback)
-            if (feedback.length > 0) {
-              if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['Area'] !== '' && feedback[0]['FORMULA'] !== '') {
-                console.log("---CALCULATEDATA---????")
-                // console.log( feedback[0]['VAL1'])
-                // console.log( feedback[0]['VAL2'])
-                // console.log( feedback[0]['Area'])
-                // console.log( feedback[0]['FORMULA'])
-
-                // console.log(evil(`12/5*9+9.4*2`));
-
-                // let FORMULAdata = feedback[0]['FORMULA'];
-                // let VAL1data = feedback[0]['VAL1'];
-                // let VAL2data = feedback[0]['VAL2'];
-                // let Areadata = feedback[0]['Area'];
-
-                // //X1+Y1+K1
-
-                // let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
-                // console.log(FORMULAresult)
-                // let result = evil(FORMULAresult)
-                // let finalresult = result;
-
-                // if (result < 0) {
-                //   finalresult = - finalresult;
-                // }
-                // console.log(finalresult)
-
-
-
-                // let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": input['PO'] });
-                // feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = finalresult;
-                // console.log(feedbackres)
-                // let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
-
-                let FORMULAdata = feedback[0]['FORMULA'];
-                let VAL1data = feedback[0]['VAL1'];
-                let VAL2data = feedback[0]['VAL2'];
-                let Areadata = feedback[0]['Area'];
-
-                let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
-                console.log(FORMULAresult)
-                let result = evil(FORMULAresult)
-                let finalresult = result;
-                console.log(finalresult)
-                if (result < 0) {
-                  finalresult = - finalresult;
-                }
-                console.log(finalresult)
-                HSEWB008db["ANSCAL2"] = finalresult;
-
-
-
-                let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": input['PO'] });
-                console.log(feedbackres)
-                if (feedbackres[0]['FINAL_ANS'] === undefined) {
-                  feedbackres[0]['FINAL_ANS'] = {}
-                  feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = finalresult;
-                  console.log(feedbackres)
-                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
-                } else {
-                  feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = finalresult;
-                  console.log(feedbackres)
-                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
-                }
-
-                output = 'OK'
-              }
-            }
-
-          } if (masterITEMs[0]['RESULTFORMAT'] === 'CAL2') {
-            console.log("---CALCULATEDATA 2---")
-            let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": input["PO"], "CP": HSEWB008db['CP'] });
-            if (feedback.length > 0) {
-              if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['VAL3'] !== '' && feedback[0]['VAL4'] !== '' && feedback[0]['Area'] !== '' && HSEWB008db['FORMULA'] !== '') {
-                console.log("-------------------VV------------------")
-                console.log(feedback[0]['VAL1'])
-                console.log(feedback[0]['VAL2'])
-                console.log(feedback[0]['VAL3'])
-                console.log(feedback[0]['VAL4'])
-                console.log(feedback[0]['Area'])
-                console.log(HSEWB008db['FORMULA'])
-
-                let FORMULAdata = HSEWB008db['FORMULA'];
-                let VAL1data = feedback[0]['VAL1'];
-                let VAL2data = feedback[0]['VAL2'];
-                let VAL3data = feedback[0]['VAL3'];
-                let VAL4data = feedback[0]['VAL4'];
-                let Areadata = feedback[0]['Area'];
-
-                let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`).replace("Z", `${VAL3data}`).replace("I", `${VAL4data}`)
-                console.log(FORMULAresult)
-                let result = evil(FORMULAresult)
-                console.log(result)
-
-                // if (result < 0) {
-                //   result = - result;
-                // }
-                // console.log(result)
-
-
-                HSEWB008db["ANSCAL2"] = result;
-
-
-
-                let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": input['PO'] });
-                console.log(feedbackres)
-                if (feedbackres[0]['FINAL_ANS'] === undefined) {
-                  feedbackres[0]['FINAL_ANS'] = {}
-                  feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = result;
-                  console.log(feedbackres)
-                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
-                } else {
-                  feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = result;
-                  console.log(feedbackres)
-                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
-                }
-
-                output = 'OK'
-
-              }
-            }
           }
+
+          // if (masterITEMs[0]['RESULTFORMAT'] === 'CAL1') {
+
+          //   console.log("---CALCULATEDATA---")
+          //   let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+          //   console.log(feedback)
+          //   if (feedback.length > 0) {
+          //     if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['Area'] !== '' && feedback[0]['FORMULA'] !== '') {
+          //       console.log("---CALCULATEDATA---????")
+          //       // console.log( feedback[0]['VAL1'])
+          //       // console.log( feedback[0]['VAL2'])
+          //       // console.log( feedback[0]['Area'])
+          //       // console.log( feedback[0]['FORMULA'])
+
+          //       // console.log(evil(`12/5*9+9.4*2`));
+
+          //       // let FORMULAdata = feedback[0]['FORMULA'];
+          //       // let VAL1data = feedback[0]['VAL1'];
+          //       // let VAL2data = feedback[0]['VAL2'];
+          //       // let Areadata = feedback[0]['Area'];
+
+          //       // //X1+Y1+K1
+
+          //       // let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+          //       // console.log(FORMULAresult)
+          //       // let result = evil(FORMULAresult)
+          //       // let finalresult = result;
+
+          //       // if (result < 0) {
+          //       //   finalresult = - finalresult;
+          //       // }
+          //       // console.log(finalresult)
+
+
+
+          //       // let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": input['PO'] });
+          //       // feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = finalresult;
+          //       // console.log(feedbackres)
+          //       // let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+
+          //       let FORMULAdata = feedback[0]['FORMULA'];
+          //       let VAL1data = feedback[0]['VAL1'];
+          //       let VAL2data = feedback[0]['VAL2'];
+          //       let Areadata = feedback[0]['Area'];
+
+          //       let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+          //       console.log(FORMULAresult)
+          //       let result = evil(FORMULAresult)
+          //       let finalresult = result;
+          //       console.log(finalresult)
+          //       if (result < 0) {
+          //         finalresult = - finalresult;
+          //       }
+          //       console.log(finalresult)
+          //       HSEWB008db["ANSCAL2"] = finalresult;
+
+
+
+          //       let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": input['PO'] });
+          //       console.log(feedbackres)
+          //       if (feedbackres[0]['FINAL_ANS'] === undefined) {
+          //         feedbackres[0]['FINAL_ANS'] = {}
+          //         feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = finalresult;
+          //         console.log(feedbackres)
+          //         let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+          //       } else {
+          //         feedbackres[0]['FINAL_ANS'][input["ITEMs"]] = finalresult;
+          //         console.log(feedbackres)
+          //         let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+          //       }
+
+          //       output = 'OK'
+          //     }
+          //   }
+
+          // }
+          // if (masterITEMs[0]['RESULTFORMAT'] === 'CAL2') {
+          //   console.log("---CALCULATEDATA 2---")
+          //   let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": input["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+          //   if (feedback.length > 0) {
+          //     if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['VAL3'] !== '' && feedback[0]['VAL4'] !== '' && feedback[0]['Area'] !== '' && HSEWB008db['FORMULA'] !== '') {
+          //       console.log("-------------------VV------------------")
+          //       //HSEWB008db["PCSNO"]
+          //       console.log(feedback[0]['VAL1'])
+          //       console.log(feedback[0]['VAL2'])
+          //       console.log(feedback[0]['VAL3'])
+          //       console.log(feedback[0]['VAL4'])
+          //       console.log(feedback[0]['Area'])
+          //       console.log(HSEWB008db['FORMULA'])
+
+          //       let FORMULAdata = HSEWB008db['FORMULA'];
+          //       let VAL1data = feedback[0]['VAL1'];
+          //       let VAL2data = feedback[0]['VAL2'];
+          //       let VAL3data = feedback[0]['VAL3'];
+          //       let VAL4data = feedback[0]['VAL4'];
+          //       let Areadata = feedback[0]['Area'];
+
+          //       let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`).replace("Z", `${VAL3data}`).replace("I", `${VAL4data}`)
+          //       console.log(FORMULAresult)
+          //       let result = evil(FORMULAresult)
+          //       console.log(result)
+
+          //       // if (result < 0) {
+          //       //   result = - result;
+          //       // }
+          //       // console.log(result)
+
+
+          //       HSEWB008db["ANSCAL2"] = result;
+
+
+
+          //       let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": input['PO'] });
+          //       console.log(feedbackres)
+          //       if (feedbackres[0]['FINAL_ANS'] === undefined) {
+          //         feedbackres[0]['FINAL_ANS'] = {}
+          //         feedbackres[0]['FINAL_ANS'][`${input["ITEMs"]}-${HSEWB008db["PCSNO"]}`] = result;
+          //         console.log(feedbackres)
+          //         let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+          //       } else {
+          //         feedbackres[0]['FINAL_ANS'][`${input["ITEMs"]}-${HSEWB008db["PCSNO"]}`] = result;
+          //         console.log(feedbackres)
+          //         let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": input['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+          //       }
+
+          //       output = 'OK'
+
+          //     }
+          //   }
+          // }
         }
 
         let CHECKlistdataFINISH = [];
@@ -1271,7 +1360,7 @@ router.post('/FINAL/HSEWB008-feedback', async (req, res) => {
             feedback[0]['CHECKlist'][i]['FINISH'] = 'OK';
             feedback[0]['CHECKlist'][i]['timestamp'] = `${Date.now()}`;
             // console.log(feedback[0]['CHECKlist']);
-            if (HSEWB008db['FREQUENCY'] === 'time/D'||HSEWB008db['FREQUENCY'] === 'time/6M' ||HSEWB008db['FREQUENCY'] === 'pcs/M'||HSEWB008db['FREQUENCY'] === 'time/Year'||HSEWB008db['FREQUENCY'] === 'pcs/Y') {
+            if (HSEWB008db['FREQUENCY'] === 'time/D' || HSEWB008db['FREQUENCY'] === 'time/6M' || HSEWB008db['FREQUENCY'] === 'pcs/M' || HSEWB008db['FREQUENCY'] === 'time/Year' || HSEWB008db['FREQUENCY'] === 'pcs/Y') {
               let resp = await axios.post('http://127.0.0.1:16090/FINAL/REFLOTSET', {
                 "PO": HSEWB008db['PO'],
                 "MATCP": HSEWB008db['CP'],
@@ -1295,7 +1384,7 @@ router.post('/FINAL/HSEWB008-feedback', async (req, res) => {
         }
 
 
-        
+
 
       }
     } else {
@@ -1347,6 +1436,7 @@ router.post('/FINAL/HSEWB008-SETZERO', async (req, res) => {
       "ItemPickcode": [],
       "PCS": "",
       "PCSleft": "",
+      "PCSNO": "",
 
       "SPEC": "",
 
@@ -1583,7 +1673,7 @@ router.post('/FINAL/HSEWB008-FINISH-CAL1', async (req, res) => {
 
 
     HSEWB008db["value"] = [];
-    let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'] });
+    let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
     if (feedback.length > 0) {
       if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['Area'] !== '') {
         HSEWB008db["value"].push({
@@ -1593,16 +1683,77 @@ router.post('/FINAL/HSEWB008-FINISH-CAL1', async (req, res) => {
           "FORMULA": feedback[0]['FORMULA'],
         });
 
+
+
+        if (HSEWB008db['RESULTFORMAT'] === 'CAL1') {
+
+          console.log("---CALCULATEDATA---")
+          let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+          console.log(feedback)
+          if (feedback.length > 0) {
+            if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['Area'] !== '' && feedback[0]['FORMULA'] !== '') {
+              console.log("---CALCULATEDATA---????")
+
+
+              let FORMULAdata = feedback[0]['FORMULA'];
+              let VAL1data = feedback[0]['VAL1'];
+              let VAL2data = feedback[0]['VAL2'];
+              let Areadata = feedback[0]['Area'];
+
+              let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+              console.log(FORMULAresult)
+              let result = evil(FORMULAresult)
+              let finalresult = result;
+              console.log(finalresult)
+              if (result < 0) {
+                finalresult = - finalresult;
+              }
+              console.log(finalresult)
+              HSEWB008db["ANSCAL2"] = finalresult;
+
+
+
+              let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] });
+              if (feedbackres.length > 0) {
+                if (feedbackres[0]['FINAL_ANS'] === undefined) {
+                  console.log("---->>M1")
+                  feedbackres[0]['FINAL_ANS'] = {}
+                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = finalresult;
+                  console.log(feedbackres)
+                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+                } else {
+                  console.log("---->>M2")
+                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = finalresult;
+                  console.log(feedbackres)
+                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+                }
+
+              } else {
+                HSEWB008db['FINAL_ANS'] = {}
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = result;
+              }
+
+              output = 'OK'
+            }
+          }
+
+        }
+
+
+
         if (HSEWB008db['RESULTFORMAT'] === 'CAL1') {
           request.post(
             'http://127.0.0.1:16090/FINAL/FINISHtoDB',
             { json: HSEWB008db },
-            function (error, response, body) {
+            async function (error, response, body) {
               if (!error && response.statusCode == 200) {
                 // console.log(body);
                 // if (body === 'OK') {
                 HSEWB008db['confirmdata'] = [];
                 HSEWB008db["value"] = [];
+
+
+
                 //------------------------------------------------------------------------------------
                 request.post(
                   'http://127.0.0.1:16090/FINAL/HSEWB008-feedback',
@@ -1648,7 +1799,7 @@ router.post('/FINAL/HSEWB008-FINISH-CAL2', async (req, res) => {
 
 
     HSEWB008db["value"] = [];
-    let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'] });
+    let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db['PO'], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
     if (feedback.length > 0) {
       if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['Area'] !== '') {
         HSEWB008db["value"].push({
@@ -1661,17 +1812,102 @@ router.post('/FINAL/HSEWB008-FINISH-CAL2', async (req, res) => {
 
         });
         console.log(HSEWB008db)
+        // request.post(
+        await axios.post(
+          'http://127.0.0.1:16090/FINAL/HSEWB008-feedback',
+          { json: { "PO": HSEWB008db['PO'], "ITEMs": HSEWB008db['inspectionItem'] } },
+          function (error, response, body2) {
+            if (!error && response.statusCode == 200) {
+              // console.log(body2);
+              // if (body2 === 'OK') {
+              output = 'OK';
+              // }
+            }
+          }
+        );
+
+        if (HSEWB008db['RESULTFORMAT'] === 'CAL2') {
+          console.log("---CALCULATEDATA 2---")
+          console.log({ "PO": input["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] })
+          let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+          console.log(feedback)
+          if (feedback.length > 0) {
+            if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['VAL3'] !== '' && feedback[0]['VAL4'] !== '' && feedback[0]['Area'] !== '' && HSEWB008db['FORMULA'] !== '') {
+              console.log("-------------------VV------------------")
+              //HSEWB008db["PCSNO"]
+              console.log(feedback[0]['VAL1'])
+              console.log(feedback[0]['VAL2'])
+              console.log(feedback[0]['VAL3'])
+              console.log(feedback[0]['VAL4'])
+              console.log(feedback[0]['Area'])
+              console.log(HSEWB008db['FORMULA'])
+
+              let FORMULAdata = HSEWB008db['FORMULA'];
+              let VAL1data = feedback[0]['VAL1'];
+              let VAL2data = feedback[0]['VAL2'];
+              let VAL3data = feedback[0]['VAL3'];
+              let VAL4data = feedback[0]['VAL4'];
+              let Areadata = feedback[0]['Area'];
+
+              let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`).replace("Z", `${VAL3data}`).replace("I", `${VAL4data}`)
+              console.log(FORMULAresult)
+              let result = evil(FORMULAresult)
+              console.log(result)
+
+              // if (result < 0) {
+              //   result = - result;
+              // }
+              // console.log(result)
+
+
+              HSEWB008db["ANSCAL2"] = result;
+
+
+
+              let feedbackres = await mongodb.find(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] });
+
+              if (feedbackres.length > 0) {
+
+
+                if (feedbackres[0]['FINAL_ANS'] === undefined) {
+                  console.log("---->>M3")
+                  feedbackres[0]['FINAL_ANS'] = {}
+                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = result;
+                  console.log(feedbackres)
+                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+                } else {
+                  console.log("---->>M4")
+                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = result;
+                  console.log(feedbackres)
+                  let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
+                }
+              } else {
+                HSEWB008db['FINAL_ANS'] = {}
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = result;
+              }
+
+              output = 'OK'
+
+            }
+          }
+        }
+
+
+
+
 
         if (HSEWB008db['RESULTFORMAT'] === 'CAL2') {
           request.post(
             'http://127.0.0.1:16090/FINAL/FINISHtoDB',
             { json: HSEWB008db },
-            function (error, response, body) {
+            async function (error, response, body) {
               if (!error && response.statusCode == 200) {
                 // console.log(body);
                 // if (body === 'OK') {
                 // HSEWB008db['confirmdata'] = [];
                 // HSEWB008db["value"] = [];
+                let masterITEMs = await mongodb.find(master_FN, ITEMs, { "masterID": HSEWB008db['inspectionItem'] });
+
                 //------------------------------------------------------------------------------------
                 request.post(
                   'http://127.0.0.1:16090/FINAL/HSEWB008-feedback',

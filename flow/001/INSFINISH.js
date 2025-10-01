@@ -84,6 +84,7 @@ router.post('/FINAL/FINISHtoDB', async (req, res) => {
 
 
     let findcp = await mongodb.find(PATTERN, PATTERN_01, { "CP": input['CP'] });
+
     let masterITEMs = await mongodb.find(master_FN, ITEMs, {});
     let MACHINEmaster = await mongodb.find(master_FN, MACHINE, {});
 
@@ -97,6 +98,7 @@ router.post('/FINAL/FINISHtoDB', async (req, res) => {
     }
 
     output['CHECKlist'] = ItemPickcodeout;
+    output['FINAL_ANS'] =  output['FINAL_ANS'];
 
     let insertdb = await mongodb.insertMany(MAIN_DATA, MAIN, [output]);
 
