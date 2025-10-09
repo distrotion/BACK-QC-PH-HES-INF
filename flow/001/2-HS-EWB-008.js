@@ -1676,7 +1676,9 @@ router.post('/FINAL/HSEWB008-FINISH-CAL1', async (req, res) => {
   //-------------------------------------
   let output = 'OK';
   if ((HSEWB008db['RESULTFORMAT'] === 'CAL1')) {
-
+    console.log(HSEWB008db['PO']);
+    console.log(HSEWB008db['CP']);
+    console.log(HSEWB008db["PCSNO"]);
 
 
     HSEWB008db["value"] = [];
@@ -1694,8 +1696,10 @@ router.post('/FINAL/HSEWB008-FINISH-CAL1', async (req, res) => {
 
         if (HSEWB008db['RESULTFORMAT'] === 'CAL1') {
 
-          console.log("---CALCULATEDATA---")
-          let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+         
+          // let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO': HSEWB008db["PCSNO"] });
+          let feedback = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO':`1` });
+          console.log("---CALCULATEDATA---1")
           console.log(feedback)
           if (feedback.length > 0) {
             if (feedback[0]['VAL1'] !== '' && feedback[0]['VAL2'] !== '' && feedback[0]['Area'] !== '' && feedback[0]['FORMULA'] !== '') {
@@ -1738,6 +1742,206 @@ router.post('/FINAL/HSEWB008-FINISH-CAL1', async (req, res) => {
               } else {
                 HSEWB008db['FINAL_ANS'] = {}
                 HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-1`] = result;
+              }
+
+              output = 'OK'
+            }
+          }
+
+          let feedback2 = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO':`2` });
+          console.log("---CALCULATEDATA---2")
+          console.log(feedback2)
+          if (feedback2.length > 0) {
+            if (feedback2[0]['VAL1'] !== '' && feedback2[0]['VAL2'] !== '' && feedback2[0]['Area'] !== '' && feedback2[0]['FORMULA'] !== '') {
+              console.log("---CALCULATEDATA---????")
+
+
+              let FORMULAdata = feedback2[0]['FORMULA'];
+              let VAL1data = feedback2[0]['VAL1'];
+              let VAL2data = feedback2[0]['VAL2'];
+              let Areadata = feedback2[0]['Area'];
+
+              let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+              console.log(FORMULAresult)
+              let result = evil(FORMULAresult)
+              let finalresult = result;
+              console.log(finalresult)
+              if (result < 0) {
+                finalresult = - finalresult;
+              }
+              console.log(finalresult)
+              HSEWB008db["ANSCAL2"] = finalresult;
+
+
+
+              let feedback2res = await mongodb.find(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] });
+              if (feedback2res.length > 0) {
+                if (feedback2res[0]['FINAL_ANS'] === undefined) {
+                  console.log("---->>M1")
+                  feedback2res[0]['FINAL_ANS'] = {}
+                  feedback2res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-2`] = finalresult;
+                  console.log(feedback2res)
+                  let feedback2updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback2res[0]['FINAL_ANS'] } });
+                } else {
+                  console.log("---->>M2")
+                  feedback2res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-2`] = finalresult;
+                  console.log(feedback2res)
+                  let feedback2updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback2res[0]['FINAL_ANS'] } });
+                }
+
+              } else {
+                HSEWB008db['FINAL_ANS'] = {}
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-2`] = result;
+              }
+
+              output = 'OK'
+            }
+          }
+
+          let feedback3 = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO':`3` });
+          console.log("---CALCULATEDATA---3")
+          console.log(feedback3)
+          if (feedback3.length > 0) {
+            if (feedback3[0]['VAL1'] !== '' && feedback3[0]['VAL2'] !== '' && feedback3[0]['Area'] !== '' && feedback3[0]['FORMULA'] !== '') {
+              console.log("---CALCULATEDATA---????")
+
+
+              let FORMULAdata = feedback3[0]['FORMULA'];
+              let VAL1data = feedback3[0]['VAL1'];
+              let VAL2data = feedback3[0]['VAL2'];
+              let Areadata = feedback3[0]['Area'];
+
+              let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+              console.log(FORMULAresult)
+              let result = evil(FORMULAresult)
+              let finalresult = result;
+              console.log(finalresult)
+              if (result < 0) {
+                finalresult = - finalresult;
+              }
+              console.log(finalresult)
+              HSEWB008db["ANSCAL2"] = finalresult;
+
+
+
+              let feedback3res = await mongodb.find(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] });
+              if (feedback3res.length > 0) {
+                if (feedback3res[0]['FINAL_ANS'] === undefined) {
+                  console.log("---->>M1")
+                  feedback3res[0]['FINAL_ANS'] = {}
+                  feedback3res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-3`] = finalresult;
+                  console.log(feedback3res)
+                  let feedback3updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback3res[0]['FINAL_ANS'] } });
+                } else {
+                  console.log("---->>M2")
+                  feedback3res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-3`] = finalresult;
+                  console.log(feedback3res)
+                  let feedback3updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback3res[0]['FINAL_ANS'] } });
+                }
+
+              } else {
+                HSEWB008db['FINAL_ANS'] = {}
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-3`] = result;
+              }
+
+              output = 'OK'
+            }
+          }
+
+          let feedback4 = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO':`4` });
+          console.log("---CALCULATEDATA---3")
+          console.log(feedback4)
+          if (feedback4.length > 0) {
+            if (feedback4[0]['VAL1'] !== '' && feedback4[0]['VAL2'] !== '' && feedback4[0]['Area'] !== '' && feedback4[0]['FORMULA'] !== '') {
+              console.log("---CALCULATEDATA---????")
+
+
+              let FORMULAdata = feedback4[0]['FORMULA'];
+              let VAL1data = feedback4[0]['VAL1'];
+              let VAL2data = feedback4[0]['VAL2'];
+              let Areadata = feedback4[0]['Area'];
+
+              let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+              console.log(FORMULAresult)
+              let result = evil(FORMULAresult)
+              let finalresult = result;
+              console.log(finalresult)
+              if (result < 0) {
+                finalresult = - finalresult;
+              }
+              console.log(finalresult)
+              HSEWB008db["ANSCAL2"] = finalresult;
+
+
+
+              let feedback4res = await mongodb.find(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] });
+              if (feedback4res.length > 0) {
+                if (feedback4res[0]['FINAL_ANS'] === undefined) {
+                  console.log("---->>M1")
+                  feedback4res[0]['FINAL_ANS'] = {}
+                  feedback4res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-4`] = finalresult;
+                  console.log(feedback4res)
+                  let feedback4updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback4res[0]['FINAL_ANS'] } });
+                } else {
+                  console.log("---->>M2")
+                  feedback4res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-4`] = finalresult;
+                  console.log(feedback4res)
+                  let feedback4updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback4res[0]['FINAL_ANS'] } });
+                }
+
+              } else {
+                HSEWB008db['FINAL_ANS'] = {}
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-4`] = result;
+              }
+
+              output = 'OK'
+            }
+          }
+
+          let feedback5 = await mongodb.find("BUFFERCAL", HSEWB008, { "PO": HSEWB008db["PO"], "CP": HSEWB008db['CP'], 'PCSNO':`5` });
+          console.log("---CALCULATEDATA---3")
+          console.log(feedback5)
+          if (feedback5.length > 0) {
+            if (feedback5[0]['VAL1'] !== '' && feedback5[0]['VAL2'] !== '' && feedback5[0]['Area'] !== '' && feedback5[0]['FORMULA'] !== '') {
+              console.log("---CALCULATEDATA---????")
+
+
+              let FORMULAdata = feedback5[0]['FORMULA'];
+              let VAL1data = feedback5[0]['VAL1'];
+              let VAL2data = feedback5[0]['VAL2'];
+              let Areadata = feedback5[0]['Area'];
+
+              let FORMULAresult = FORMULAdata.replace("X", `${VAL1data}`).replace("Y", `${VAL2data}`).replace("K1", `${Areadata}`)
+              console.log(FORMULAresult)
+              let result = evil(FORMULAresult)
+              let finalresult = result;
+              console.log(finalresult)
+              if (result < 0) {
+                finalresult = - finalresult;
+              }
+              console.log(finalresult)
+              HSEWB008db["ANSCAL2"] = finalresult;
+
+
+
+              let feedback5res = await mongodb.find(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] });
+              if (feedback5res.length > 0) {
+                if (feedback5res[0]['FINAL_ANS'] === undefined) {
+                  console.log("---->>M1")
+                  feedback5res[0]['FINAL_ANS'] = {}
+                  feedback5res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-5`] = finalresult;
+                  console.log(feedback5res)
+                  let feedback5updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback5res[0]['FINAL_ANS'] } });
+                } else {
+                  console.log("---->>M2")
+                  feedback5res[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-5`] = finalresult;
+                  console.log(feedback5res)
+                  let feedback5updateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedback5res[0]['FINAL_ANS'] } });
+                }
+
+              } else {
+                HSEWB008db['FINAL_ANS'] = {}
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-5`] = result;
               }
 
               output = 'OK'
