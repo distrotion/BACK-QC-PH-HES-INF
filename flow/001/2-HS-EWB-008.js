@@ -1725,19 +1725,19 @@ router.post('/FINAL/HSEWB008-FINISH-CAL1', async (req, res) => {
                 if (feedbackres[0]['FINAL_ANS'] === undefined) {
                   console.log("---->>M1")
                   feedbackres[0]['FINAL_ANS'] = {}
-                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-1`] = finalresult;
+                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = finalresult;
                   console.log(feedbackres)
                   let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
                 } else {
                   console.log("---->>M2")
-                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-1`] = finalresult;
+                  feedbackres[0]['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = finalresult;
                   console.log(feedbackres)
                   let feedbackupdateRESULTFORMAT = await mongodb.update(MAIN_DATA, MAIN, { "PO": HSEWB008db['PO'] }, { "$set": { 'FINAL_ANS': feedbackres[0]['FINAL_ANS'] } });
                 }
 
               } else {
                 HSEWB008db['FINAL_ANS'] = {}
-                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-1`] = result;
+                HSEWB008db['FINAL_ANS'][`${HSEWB008db["inspectionItem"]}-${HSEWB008db["PCSNO"]}`] = result;
               }
 
               output = 'OK'
